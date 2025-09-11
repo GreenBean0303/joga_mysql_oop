@@ -1,4 +1,4 @@
-const pool = require('../utils/db'); // Replace with your MySQL pool configuration
+const pool = require('../utils/db'); 
 
 class BaseSQLModel {
   constructor(tableName) {
@@ -19,27 +19,26 @@ class BaseSQLModel {
 
   async findAll() {
     const query = `SELECT * FROM ${this.tableName}`;
-    const results = await this.executeQuery(query);
+    const results = await this.executeQuery(query,);
     return results;
   }
 
-  async findOne() {
-    const query = `SELECT * FROM ${this.tableName} WHERE ${where} = "${value}"`;
-    const results = await this.executeQuery(query);
-    return results;
-  }
-
+  async findOne(where, value) {
+  const query = `SELECT * FROM ${this.tableName} WHERE ${where} = ?`;
+  const results = await this.executeQuery(query, [value]);
+  return results[0];
+}
   async findById(id) {
     const query = `SELECT * FROM ${this.tableName} WHERE id = ?`;
     const results = await this.executeQuery(query, [id]);
     return results[0];
   }
 
-  async findMany(where,value){
-    const query = `SELECT * FROM ${this.tableName} WHERE ${where} = "${value}"`;
-    const results = await this.executeQuery(query,[where,value]);
-    return results;
-  } 
+  async findMany(where, value) {
+  const query = `SELECT * FROM ${this.tableName} WHERE ${where} = ?`;
+  const results = await this.executeQuery(query, [value]);
+  return results;
+}
 
   async create(data) {
     const query = `INSERT INTO ${this.tableName} SET ?`;
