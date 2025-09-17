@@ -16,6 +16,8 @@ class articleController {
         res.status(201).json({article: article});
     }
 
+
+
     async createNewArticle(req, res) {
         const newArticle ={
             name: req.body.name,
@@ -29,8 +31,33 @@ class articleController {
         res.status(201).json({ 
             message: `create article with id ${articleId}`, 
             article:{id: articleId, ...newArticle}     
+        });
+    } 
+
+    async updateArticle(req, res) {
+        try {
+        const articleId = req.params.id;
+        const articleData = {
+            name: req.body.name,
+            slug: req.body.slug,
+            image: req.body.image,
+            body: req.body.body,
+            author_id: req.body.author_id
+        };
+
+        const result = await articleModel.update(articleId, articleData);
+        if (result >0) {
+            res.status(201).json({ 
+                message: `Article with id ${articleId} updated successfully`, 
+                affectRows: result
             });
-        } 
+        }
+    }  
+    catch (error) {
+        res.status(500).json({ message: 'Error updating article', error: error.message });
+    }
+    }
+
 }
 
 module.exports = articleController;
