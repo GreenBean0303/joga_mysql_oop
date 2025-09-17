@@ -7,7 +7,7 @@ class UserController {
     
     async registerUser(req, res) {
         try {
-            const { username, email, password } = req.body;
+            const { username, email, password, role = 'user' } = req.body; 
             
             const existingUser = await userModel.findByUsername(username);
             if (existingUser) {
@@ -31,6 +31,13 @@ class UserController {
                     error: 'User registration failed'
                 });
             }
+            
+            if (!['user', 'admin'].includes(role)) {
+                return res.status(400).json({
+                    message: 'Invalid role. Must be either "user" or "admin"',
+                    error: 'User registration failed'
+                });
+            }
         
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -38,7 +45,8 @@ class UserController {
             const newUser = {
                 username: username,
                 email: email,
-                password: hashedPassword
+                password: hashedPassword,
+                role: role
             };
             
             const userId = await userModel.create(newUser);
@@ -46,7 +54,8 @@ class UserController {
             req.session.user = {
                 id: userId,
                 username: username,
-                email: email
+                email: email,
+                role: role 
             };
             
             res.status(201).json({
@@ -54,7 +63,8 @@ class UserController {
                 user: {
                     id: userId,
                     username: username,
-                    email: email
+                    email: email,
+                    role: role 
                 }
             });
             
@@ -92,7 +102,8 @@ class UserController {
             req.session.user = {
                 id: user.id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                role: user.role 
             };
             
             res.status(200).json({
@@ -100,7 +111,8 @@ class UserController {
                 user: {
                     id: user.id,
                     username: user.username,
-                    email: user.email
+                    email: user.email,
+                    role: user.role 
                 },
                 session: req.session.user
             });
@@ -109,6 +121,37 @@ class UserController {
             console.error('Error logging in user:', error);
             res.status(500).json({
                 message: 'Error logging in user',
+                error: error.message
+            });
+        }
+    }
+    
+    async getUsersByRole(req, res) {
+        try {
+            const { role } = req.params;
+            
+            if (!['user', 'admin'].includes(role)) {
+                return res.status(400).json({
+                    message: 'Invalid role. Must be either "user" or "admin"'
+                });
+            }
+            
+            const users = await userModel.findByRole(role);
+            
+            res.status(200).json({
+                message: `Found ${users.length} users with role: ${role}`,
+                users: users.map(user => ({
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role
+                }))
+            });
+            
+        } catch (error) {
+            console.error('Error finding users by role:', error);
+            res.status(500).json({
+                message: 'Error finding users by role',
                 error: error.message
             });
         }

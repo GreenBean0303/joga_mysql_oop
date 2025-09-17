@@ -20,6 +20,11 @@ class UserModel extends BaseSQLModel {
         return user;
     }
     
+    async findByRole(role) {
+        const users = await super.findMany('role', role);
+        return users;
+    }
+    
     async create(userData) {
         const createdUserId = await super.create(userData);
         return createdUserId;
