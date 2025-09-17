@@ -9,7 +9,6 @@ class UserController {
         try {
             const { username, email, password } = req.body;
             
-
             const existingUser = await userModel.findByUsername(username);
             if (existingUser) {
                 return res.status(400).json({
@@ -18,7 +17,6 @@ class UserController {
                 });
             }
             
-
             if (password.length < 6) {
                 return res.status(400).json({
                     message: 'Password must be at least 6 characters long',
@@ -64,6 +62,53 @@ class UserController {
             console.error('Error registering user:', error);
             res.status(500).json({
                 message: 'Error registering user',
+                error: error.message
+            });
+        }
+    }
+    
+    async loginUser(req, res) {
+        try {
+            const { username, password } = req.body;
+            
+            const user = await userModel.findByUsername(username);
+            
+            if (!user) {
+                return res.status(401).json({
+                    message: 'Invalid username or password',
+                    error: 'Login failed'
+                });
+            }
+            
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+            
+            if (!isPasswordValid) {
+                return res.status(401).json({
+                    message: 'Invalid username or password',
+                    error: 'Login failed'
+                });
+            }
+            
+            req.session.user = {
+                id: user.id,
+                username: user.username,
+                email: user.email
+            };
+            
+            res.status(200).json({
+                message: `User ${username} logged in successfully`,
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email
+                },
+                session: req.session.user
+            });
+            
+        } catch (error) {
+            console.error('Error logging in user:', error);
+            res.status(500).json({
+                message: 'Error logging in user',
                 error: error.message
             });
         }
