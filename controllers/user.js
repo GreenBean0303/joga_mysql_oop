@@ -9,6 +9,31 @@ class UserController {
         try {
             const { username, email, password } = req.body;
             
+
+            const existingUser = await userModel.findByUsername(username);
+            if (existingUser) {
+                return res.status(400).json({
+                    message: 'Username already exists',
+                    error: 'User registration failed'
+                });
+            }
+            
+
+            if (password.length < 6) {
+                return res.status(400).json({
+                    message: 'Password must be at least 6 characters long',
+                    error: 'User registration failed'
+                });
+            }
+
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+            if (!passwordPattern.test(password)) {
+                return res.status(400).json({
+                    message: 'Password must contain at least one lowercase letter, one uppercase letter, and one number',
+                    error: 'User registration failed'
+                });
+            }
+        
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds);
             
