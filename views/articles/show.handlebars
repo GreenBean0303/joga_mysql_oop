@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <article>
+            {{#if article.image}}
+            <img src="/images/{{article.image}}" class="img-fluid mb-4" alt="{{article.name}}" style="width: 100%; height: 400px; object-fit: cover;">
+            {{/if}}
+            
+            <h1 class="mb-3">{{article.name}}</h1>
+            
+            <p class="text-muted mb-4">
+                Publitseeritud: {{formatDate article.published}} | 
+                Autor ID: {{article.author_id}}
+            </p>
+            
+            <div class="content">
+                {{{article.body}}}
+            </div>
+        </article>
+        
+        <hr class="my-4">
+        
+        <div class="d-flex justify-content-between">
+            <a href="/" class="btn btn-secondary">Tagasi nimekirja</a>
+            <div>
+                <a href="/article/edit/{{article.id}}" class="btn btn-warning">Muuda artiklit</a>
+                <form method="POST" action="/article/delete/{{article.id}}?_method=DELETE" style="display: inline;" 
+                      onsubmit="return confirm('Kas olete kindel, et soovite artikli kustutada?')">
+                    <button type="submit" class="btn btn-danger">Kustuta artikkel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Kõik Artiklid</h1>
+    <a href="/article/create/form" class="btn btn-primary">Lisa uus artikkel</a>
+</div>
+
+{{#if articles}}
+    <div class="row">
+        {{#each articles}}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                {{#if this.image}}
+                <img src="/images/{{this.image}}" class="card-img-top" alt="{{this.name}}" style="height: 200px; object-fit: cover;">
+                {{/if}}
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="/article/{{this.slug}}" class="text-decoration-none">{{this.name}}</a>
+                    </h5>
+                    <p class="card-text">{{truncate this.body 120}}</p>
+                    <p class="card-text"><small class="text-muted">Publitseeritud: {{formatDate this.published}}</small></p>
+                    <div class="d-flex justify-content-between">
+                        <a href="/article/{{this.slug}}" class="btn btn-primary btn-sm">Loe edasi</a>
+                        <div>
+                            <a href="/article/edit/{{this.id}}" class="btn btn-outline-secondary btn-sm">Muuda</a>
+                            <form method="POST" action="/article/delete/{{this.id}}?_method=DELETE" style="display: inline;" 
+                                  onsubmit="return confirm('Kas olete kindel, et soovite artikli kustutada?')">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Kustuta</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+{{else}}
+    <div class="alert alert-info">
+        <p>Ühtegi artiklit ei ole veel lisatud.</p>
+        <a href="/article/create/form" class="btn btn-primary">Lisa esimene artikkel</a>
+    </div>
+{{/if}}
+

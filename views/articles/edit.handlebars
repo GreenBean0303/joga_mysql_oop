@@ -1,0 +1,56 @@
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Muuda artiklit</h3>
+                </div>
+                <div class="card-body">
+                    <form action="/article/edit/{{article.id}}" method="POST">
+                        <input type="hidden" name="_method" value="PUT">
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Artikli pealkiri</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{article.name}}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="slug" class="form-label">URL slug</label>
+                            <input type="text" class="form-control" id="slug" name="slug" 
+                                   value="{{article.slug}}" required>
+                            <div class="form-text">URL-is kasutatav nimi, nt: "minu-artikkel"</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Pildi faili nimi</label>
+                            <input type="text" class="form-control" id="image" name="image" 
+                                   value="{{article.image}}" placeholder="nt: article1.jpg">
+                            <div class="form-text">Pildi faili nimi images kaustas</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="author_id" class="form-label">Autori ID</label>
+                            <input type="number" class="form-control" id="author_id" name="author_id" 
+                                   value="{{article.author_id}}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="body" class="form-label">Artikli sisu</label>
+                            <textarea class="form-control" id="body" name="body" rows="10" required>{{article.body}}</textarea>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">Uuenda artiklit</button>
+                            <div>
+                                <a href="/article/{{article.slug}}" class="btn btn-secondary me-2">Tühista</a>
+                                <a href="/" class="btn btn-outline-secondary">Tagasi nimekirja</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
